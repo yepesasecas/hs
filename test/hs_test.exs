@@ -14,7 +14,6 @@ defmodule HsTest do
 
   test "multiple questions" do
     assert {:question, tx_id, int_id, question} = HS.describe_product("spoon")
-<<<<<<< HEAD
 
     kitchen_or_table_utensil = HsTest.find_question_answer(question, "kitchen or table utensil")
     assert kitchen_or_table_utensil != nil
@@ -31,10 +30,5 @@ defmodule HsTest do
 
   def find_question_answer(question, answer_name) do
     Enum.find(question, nil, fn(q) -> q.name == answer_name end)
-=======
-    assert {:question, tx_id, int_id, question} = HS.answer_question(tx_id, int_id, %{"kitchen or table utensil" => question["kitchen or table utensil"]})
-    assert {:question, tx_id, int_id, question} = HS.answer_question(tx_id, int_id, %{"base metal" => question["base metal"]})
-    assert {:ok, _tx_id, "821599"}               = HS.answer_question(tx_id, int_id, %{"other" => question["other"]})
->>>>>>> master
   end
 end
