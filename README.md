@@ -1,13 +1,24 @@
-# Hs
-HS permite obtener el HS6 de tus productos con la descripcion.
+# HS
+HS6 Classification Tool.
 
 ## Example
 
-```
-{:ok, id, hs6} = HS.describe_product("spoon")
-{:question, id, question} = HS.describe_product("spoon")
+### No Questions Classification
+
+```elixir
+iex> HS.describe_product("iphone")
+{:ok, "xxx", "851712"}
 ```
 
+### Multi Question Classification
+
+```elixir
+iex> HS.describe_product("spoon")
+{:question, "xxx", "xxx123", %{"artificial bait" => "3d2c8946-dcfc-44a3-b87c-5d34b25246e6", "hand tool" => "c0a3aaeb-c51e-4c67-b88a-660b87f2b26e", "kitchen or table utensil" => "4fdb7e01-a09f-436d-9aa2-24839ee903f2"}}
+
+iex> HS.answer_question("xxx", "xxx123", %{"artificial bait" => "3d2c8946-dcfc-44a3-b87c-5d34b25246e6"})
+{:ok, "xxx", "950790"}
+```
 
 ## Installation
 
