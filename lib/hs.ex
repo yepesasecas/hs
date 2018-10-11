@@ -24,6 +24,8 @@ defmodule HS do
         product = %{}
           |> Map.put(:current_item_name, body["currentItemName"])
           |> Map.put(:question, questions(body))
+          |> Map.put(:label, body["currentQuestionInteraction"]["label"])
+          |> Map.put(:type, body["currentQuestionInteraction"]["type"])
         {:question, body["txId"], body["currentQuestionInteraction"]["id"], product}
     end
   end
@@ -31,7 +33,7 @@ defmodule HS do
   defp questions(body) do
     body["currentQuestionInteraction"]["attrs"]
     |> Enum.reduce([], fn(x, acc) ->
-      question = %{name: x["name"], id: x["id"]}
+      question = %{name: x["name"], id: x["id"], value: x["value"]}
       [question | acc]
     end)
   end
