@@ -16,9 +16,15 @@ defmodule HS do
   defp response_format(body) do
     case body do
       %{"hsCode" => hs_code} when hs_code != "" ->
-        {:ok, body["txId"], hs_code}
+        product = %{}
+          |> Map.put(:hs_code, hs_code)
+          |> Map.put(:current_item_name, body["currentItemName"])
+        {:ok, body["txId"], product}
       _ ->
-        {:question, body["txId"], body["currentQuestionInteraction"]["id"], questions(body)}
+        product = %{}
+          |> Map.put(:current_item_name, body["currentItemName"])
+          |> Map.put(:question, questions(body))
+        {:question, body["txId"], body["currentQuestionInteraction"]["id"], product}
     end
   end
 
