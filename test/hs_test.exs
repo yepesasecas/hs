@@ -5,14 +5,16 @@ defmodule HsTest do
     assert {:ok, _tx_id, product} = HS.describe_product("iphone")
     assert "851712" == product.hs_code
     assert "iPhone" == product.current_item_name
+    assert [:assumed, :known] == Map.keys(product.characteristics)
   end
 
   test "one questions" do
-    assert {:question, tx_id, int_id, %{question: question, label: label, type: type}} = HS.describe_product("spoon")
+    assert {:question, tx_id, int_id, %{question: question, label: label, type: type, characteristics: characteristics}} = HS.describe_product("spoon")
     artificial_bait = HsTest.find_question_answer(question, "artificial bait")
     assert artificial_bait != nil
     assert label == "item"
     assert type == "SELECTION"
+    assert [:assumed, :known] == Map.keys(characteristics)
     assert {:ok, _tx_id, product} = HS.answer_question(tx_id, int_id, %{"artificial bait" => artificial_bait.id})
     assert "950790" == product.hs_code
     assert "artificial bait" == product.current_item_name
@@ -26,6 +28,7 @@ defmodule HsTest do
     assert kitchen_or_table_utensil != nil
     assert product.label == "item"
     assert product.type == "SELECTION"
+    assert [:assumed, :known] == Map.keys(product.characteristics)
     assert {:question, tx_id, int_id, product} = HS.answer_question(tx_id, int_id, %{"kitchen or table utensil" => kitchen_or_table_utensil.id})
     assert "spoon" == product.current_item_name
     question = product.question
@@ -34,6 +37,7 @@ defmodule HsTest do
     assert base_metal != nil
     assert product.label == "composition"
     assert product.type == "SELECTION"
+    assert [:assumed, :known] == Map.keys(product.characteristics)
     assert {:question, tx_id, int_id, product} = HS.answer_question(tx_id, int_id, %{"base metal" => base_metal.id})
     assert "spoon" == product.current_item_name
     question = product.question
@@ -42,6 +46,7 @@ defmodule HsTest do
     assert other != nil
     assert product.label == "coating"
     assert product.type == "SELECTION"
+    assert [:assumed, :known] == Map.keys(product.characteristics)
     assert {:ok, tx_id, product} = HS.answer_question(tx_id, int_id, %{"other" => other.id})
     assert "821599" == product.hs_code
     assert "spoon" == product.current_item_name
