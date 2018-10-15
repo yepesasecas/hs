@@ -8,10 +8,12 @@ defmodule HsTest do
   end
 
   test "one questions" do
-    assert {:question, tx_id, int_id, %{question: question}} = HS.describe_product("spoon")
-    artifical_bait = HsTest.find_question_answer(question, "artificial bait")
-    assert artifical_bait != nil
-    assert {:ok, _tx_id, product} = HS.answer_question(tx_id, int_id, %{"artificial bait" => artifical_bait.id})
+    assert {:question, tx_id, int_id, %{question: question, label: label, type: type}} = HS.describe_product("spoon")
+    artificial_bait = HsTest.find_question_answer(question, "artificial bait")
+    assert artificial_bait != nil
+    assert label == "item"
+    assert type == "SELECTION"
+    assert {:ok, _tx_id, product} = HS.answer_question(tx_id, int_id, %{"artificial bait" => artificial_bait.id})
     assert "950790" == product.hs_code
     assert "artificial bait" == product.current_item_name
   end
@@ -22,18 +24,24 @@ defmodule HsTest do
 
     kitchen_or_table_utensil = HsTest.find_question_answer(question, "kitchen or table utensil")
     assert kitchen_or_table_utensil != nil
+    assert product.label == "item"
+    assert product.type == "SELECTION"
     assert {:question, tx_id, int_id, product} = HS.answer_question(tx_id, int_id, %{"kitchen or table utensil" => kitchen_or_table_utensil.id})
     assert "spoon" == product.current_item_name
     question = product.question
 
     base_metal = HsTest.find_question_answer(question, "base metal")
     assert base_metal != nil
+    assert product.label == "composition"
+    assert product.type == "SELECTION"
     assert {:question, tx_id, int_id, product} = HS.answer_question(tx_id, int_id, %{"base metal" => base_metal.id})
     assert "spoon" == product.current_item_name
     question = product.question
 
     other = HsTest.find_question_answer(question, "other")
     assert other != nil
+    assert product.label == "coating"
+    assert product.type == "SELECTION"
     assert {:ok, tx_id, product} = HS.answer_question(tx_id, int_id, %{"other" => other.id})
     assert "821599" == product.hs_code
     assert "spoon" == product.current_item_name
