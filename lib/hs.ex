@@ -19,10 +19,12 @@ defmodule HS do
         product = %{}
           |> Map.put(:hs_code, hs_code)
           |> Map.put(:current_item_name, body["currentItemName"])
+          |> Map.put(:characteristics, %{assumed: body["assumedInteractions"], known: body["knownInteractions"]})
         {:ok, body["txId"], product}
       _ ->
         product = %{}
           |> Map.put(:current_item_name, body["currentItemName"])
+          |> Map.put(:characteristics, %{assumed: body["assumedInteractions"], known: body["knownInteractions"]})
           |> Map.put(:question, questions(body))
           |> Map.put(:label, body["currentQuestionInteraction"]["label"])
           |> Map.put(:type, body["currentQuestionInteraction"]["type"])
