@@ -4,7 +4,7 @@ defmodule Census do
       |> Map.put(:state, "start")
       |> Map.put(:proddesc, desc)
       |> Poison.encode!()
-      |> run_request()
+      |> run_request("post", "https://uscensus.prod.3ceonline.com/ui/classify")
   end
 
   def answer_question(tx_id, int_id, answer) do
@@ -21,7 +21,15 @@ defmodule Census do
         }],
       })
       |> Poison.encode!()
-      |> run_request()
+      |> run_request("post", "https://uscensus.prod.3ceonline.com/ui/classify")
+  end
+
+  def get_schedule_list(hs_code) do
+    run_request("", "get", "https://uscensus.prod.3ceonline.com/ui/tradedata/export/schedule/find/#{hs_code}/US/US/true")
+  end
+
+  def get_legal_notes(hs_code) do
+    run_request("", "get", "https://uscensus.prod.3ceonline.com/ui/apis/notes/v1/find/export/US/en/#{hs_code}")
   end
 
   defp census_request_template do
@@ -36,8 +44,8 @@ defmodule Census do
     }
   end
 
-  defp run_request(request) do
-    {:ok, %HTTPoison.Response{body: body, headers: _headers}} = HTTPoison.post('https://uscensus.prod.3ceonline.com/ui/classify', request, [{"Content-Type", "application/json"}, timeout: 50_000, recv_timeout: 50_000])
+  defp run_request(request, method, url) do
+    {:ok, %HTTPoison.Response{body: body, headers: _headers}} = HTTPoison.request(method, url, request, [{"Content-Type", "application/json"}], [timeout: 50_000, recv_timeout: 50_000])
     Poison.decode!(body)
   end
 end
