@@ -13,6 +13,16 @@ defmodule HS do
     |> response_format()
   end
 
+  def get_schedule_list(hs_code) do
+    body = Census.get_schedule_list(hs_code)
+    {:schedule_list, body}
+  end
+
+  def get_legal_notes(hs_code) do
+    body = Census.get_legal_notes(hs_code)
+    {:notes, body}
+  end
+
   defp response_format(body) do
     case body do
       %{"hsCode" => hs_code} when hs_code != "" ->
