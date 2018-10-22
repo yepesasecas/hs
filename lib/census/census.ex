@@ -46,6 +46,10 @@ defmodule Census do
 
   defp run_request(request, method, url) do
     {:ok, %HTTPoison.Response{body: body, headers: _headers}} = HTTPoison.request(method, url, request, [{"Content-Type", "application/json"}], [timeout: 50_000, recv_timeout: 50_000])
-    Poison.decode!(body)["data"]
+    body = Poison.decode!(body)
+    case Map.has_key?(body, "data") do
+      true -> body["data"]
+      _ -> body
+    end
   end
 end
