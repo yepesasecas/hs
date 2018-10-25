@@ -31,6 +31,10 @@ defmodule HS do
           |> Map.put(:current_item_name, body["currentItemName"])
           |> Map.put(:characteristics, %{assumed: body["assumedInteractions"], known: body["knownInteractions"]})
         {:ok, body["txId"], product}
+      %{"currentItemName" => currentItemName} when currentItemName == "Unknown Item" ->
+        product = %{}
+          |> Map.put(:current_item_name, body["currentItemName"])
+        {:question, body["txId"], product}
       _ ->
         product = %{}
           |> Map.put(:current_item_name, body["currentItemName"])
