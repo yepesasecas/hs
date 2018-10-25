@@ -34,7 +34,7 @@ defmodule HS do
       %{"currentItemName" => currentItemName} when currentItemName == "Unknown Item" ->
         product = %{}
           |> Map.put(:current_item_name, body["currentItemName"])
-        {:question, body["txId"], product}
+        {:error, body["txId"], product}
       _ ->
         product = %{}
           |> Map.put(:current_item_name, body["currentItemName"])
