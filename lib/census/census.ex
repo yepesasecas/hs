@@ -7,21 +7,25 @@ defmodule Census do
       |> run_request("post", "https://uscensus.prod.3ceonline.com/ui/classify")
   end
 
-  def answer_question(tx_id, int_id, answer) do
-    [key | _] = Map.keys(answer)
-
+  def answer_valued_question(tx_id, int_id, answer) do
     census_request_template()
       |> Map.merge(%{
         state: "continue",
         interactionid: int_id,
         txid: tx_id,
-        values: [%{
-          first: answer[key],
-          second: key
-        }],
+        values: answer,
       })
       |> Poison.encode!()
       |> run_request("post", "https://uscensus.prod.3ceonline.com/ui/classify")
+  end
+
+  def answer_question(tx_id, int_id, answer) do
+    [key | _] = Map.keys(answer)
+    answer = [%{
+      first: answer[key],
+      second: key
+    }]
+    answer_valued_question(tx_id, int_id, answer)
   end
 
   def get_schedule_list(hs_code) do
@@ -46,6 +50,6 @@ defmodule Census do
 
   defp run_request(request, method, url) do
     {:ok, %HTTPoison.Response{body: body, headers: _headers}} = HTTPoison.request(method, url, request, [{"Content-Type", "application/json"}], [timeout: 50_000, recv_timeout: 50_000])
-    Poison.decode!(body)
+    Poison.decode!(body)["data"]
   end
 end
