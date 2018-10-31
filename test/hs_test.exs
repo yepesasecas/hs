@@ -55,10 +55,9 @@ defmodule HsTest do
   test "valued question" do
     assert {:question, tx_id, int_id, product} = HS.describe_product("tshirt")
     tshirt = HsTest.find_question_answer(product.question, "babies'")
-    assert {:question, tx_id, int_id, product} = HS.answer_question(tx_id, int_id, %{"babies'" => tshirt.id})
+    assert {:valued_question, tx_id, int_id, product} = HS.answer_question(tx_id, int_id, %{"babies'" => tshirt.id})
     assert product.label == "composition"
     assert product.type == "VALUED"
-    assert [:assumed, :known] == Map.keys(product.characteristics)
     assert {:ok, tx_id, product} = HS.answer_valued_question(tx_id, int_id, format_valued_question(product.question, %{"cotton" => "80", "synthetic fibre" => "20", "other textile material" => "0"}))
     assert "611120" == product.hs_code
   end

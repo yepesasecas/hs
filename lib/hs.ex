@@ -28,6 +28,8 @@ defmodule HS do
     {:notes, body}
   end
 
+  # private
+
   defp response_format(%{"hsCode" => hs_code} = body)  when hs_code != "" do
     product = %{}
       |> Map.put(:hs_code, hs_code)
@@ -35,14 +37,20 @@ defmodule HS do
       |> Map.put(:characteristics, %{assumed: body["assumedInteractions"], known: body["knownInteractions"]})
     {:ok, body["txId"], product}
   end
+  defp response_format(%{"currentQuestionInteraction" => %{"type" => "VALUED"}} = body) do
+    {:valued_question, body["txId"], body["currentQuestionInteraction"]["id"], question_response_format(body)}
+  end
   defp response_format(body) do
-    product = %{}
-      |> Map.put(:current_item_name, body["currentItemName"])
-      |> Map.put(:characteristics, %{assumed: body["assumedInteractions"], known: body["knownInteractions"]})
-      |> Map.put(:question, questions(body))
-      |> Map.put(:label, body["currentQuestionInteraction"]["label"])
-      |> Map.put(:type, body["currentQuestionInteraction"]["type"])
-    {:question, body["txId"], body["currentQuestionInteraction"]["id"], product}
+    {:question, body["txId"], body["currentQuestionInteraction"]["id"],  question_response_format(body)}
+  end
+
+  defp question_response_format(body) do
+    %{}
+    |> Map.put(:current_item_name, body["currentItemName"])
+    |> Map.put(:characteristics, %{assumed: body["assumedInteractions"], known: body["knownInteractions"]})
+    |> Map.put(:question, questions(body))
+    |> Map.put(:label, body["currentQuestionInteraction"]["label"])
+    |> Map.put(:type, body["currentQuestionInteraction"]["type"])
   end
 
   defp questions(body) do
