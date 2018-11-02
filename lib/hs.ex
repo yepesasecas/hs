@@ -37,6 +37,11 @@ defmodule HS do
       |> Map.put(:characteristics, %{assumed: body["assumedInteractions"], known: body["knownInteractions"]})
     {:ok, body["txId"], product}
   end
+  defp response_format(%{"currentItemName" => currentItemName} = body) when currentItemName == "Unknown Item" do
+    product = %{}
+      |> Map.put(:current_item_name, body["currentItemName"])
+    {:error, body["txId"], product}
+  end
   defp response_format(%{"currentQuestionInteraction" => %{"type" => "VALUED"}} = body) do
     {:valued_question, body["txId"], body["currentQuestionInteraction"]["id"], question_response_format(body)}
   end
