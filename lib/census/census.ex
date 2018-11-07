@@ -49,7 +49,7 @@ defmodule Census do
   end
 
   defp run_request(request, method, url) do
-    {:ok, %HTTPoison.Response{body: body, headers: _headers}} = HTTPoison.request(method, url, request, [{"Content-Type", "application/json"}], [timeout: 50_000, recv_timeout: 50_000])
+    {:ok, %HTTPoison.Response{body: body, headers: _headers}} = HTTPoison.request(method, url, request, [{"Content-Type", "application/json"}], [timeout: 50_000, recv_timeout: 50_000, hackney: [cookie: ["ccce.key=s%3Azky3sA4S9UdL5eh8gFlnZIIEJuKS4Z6X.S2Ccg7V%2FtWOJGH2T%2B5AwkGnCsWWEvTHQsWTzMK1DGDI;"]]])
     body = Poison.decode!(body)
     case Map.has_key?(body, "data") do
       true -> body["data"]
