@@ -38,22 +38,34 @@ defmodule Census do
 
   defp census_request_template do
     %{
-      lang: "en",
-      username: "NOT_SET",
-      userData: "NO_DATA_AVAIL",
       destination: "US",
+      lang: "en",
       origin: "US",
       proddesc: "spoon",
-      profileId: "57471f0c4ac2c9b910000000"
+      profileId: "57471f0c4ac2c9b910000000",
+      schedule: "import/export",
+      state: "start",
+      stopAtHS6: "Y",
+      username: "NOT_SET",
+      userData: "NO_DATA_AVAIL"
     }
   end
 
   defp run_request(request, method, url) do
-    {:ok, %HTTPoison.Response{body: body, headers: _headers}} = HTTPoison.request(method, url, request, [{"Content-Type", "application/json"}], [timeout: 50_000, recv_timeout: 50_000])
+    {:ok, %HTTPoison.Response{body: body, headers: _headers}} = response = HTTPoison.request(method, url, request, [{"Content-Type", "application/json"}], [timeout: 50_000, recv_timeout: 50_000, hackney: [cookie: [get_cookie()]]])
     body = Poison.decode!(body)
     case Map.has_key?(body, "data") do
       true -> body["data"]
       _ -> body
     end
   end
+
+  def get_cookie do
+    {:ok, %HTTPoison.Response{headers: headers}} = HTTPoison.get("https://uscensus.prod.3ceonline.com/")
+    {"set-cookie", cookie} = Enum.find(headers, nil, fn(x) ->  do_get_cookie(x) end)
+    cookie
+  end
+
+  defp do_get_cookie({"set-cookie", _}), do: true
+  defp do_get_cookie(_), do: false
 end
